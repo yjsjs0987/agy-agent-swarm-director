@@ -1,0 +1,89 @@
+{
+  "categories": {
+    "repo-explore": {
+      "label": "현 저장소 탐색",
+      "defaultRole": "scout",
+      "antigravity": { "tier": "flash_lite", "agent": "asd-scout" },
+      "opencode": { "category": "quick", "reasoningEffort": "none" },
+      "claude-code": { "model": "haiku", "thinkingBudget": 0 },
+      "codex": { "model": "codex-mini", "reasoningEffort": "low" }
+    },
+    "external-research": {
+      "label": "외부 문서·코드 탐색",
+      "defaultRole": "scout",
+      "mcpHint": ["context7", "grep_app", "websearch"],
+      "antigravity": { "tier": "flash_lite", "agent": "asd-scout" },
+      "opencode": { "category": "quick", "reasoningEffort": "low" },
+      "claude-code": { "model": "haiku", "thinkingBudget": 1024 },
+      "codex": { "model": "codex-mini", "reasoningEffort": "low" }
+    },
+    "multimodal": {
+      "label": "멀티모달 분석",
+      "defaultRole": "worker",
+      "modality": "vision",
+      "antigravity": { "tier": "flash", "agent": "multimodal-looker" },
+      "opencode": { "category": "visual-engineering", "reasoningEffort": "low" },
+      "claude-code": { "model": "sonnet", "thinkingBudget": 2048 },
+      "codex": { "model": "gpt-4o", "reasoningEffort": "low" }
+    },
+    "writing": {
+      "label": "글쓰기·문서화",
+      "defaultRole": "worker",
+      "antigravity": { "tier": "flash", "agent": "asd-worker" },
+      "opencode": { "category": "writing", "reasoningEffort": "low" },
+      "claude-code": { "model": "sonnet", "thinkingBudget": 1024 },
+      "codex": { "model": "gpt-5-mini", "reasoningEffort": "low" }
+    },
+    "frontend-ui": {
+      "label": "프론트엔드·UI",
+      "defaultRole": "worker",
+      "antigravity": { "tier": "flash", "agent": "asd-worker" },
+      "opencode": { "category": "visual-engineering", "reasoningEffort": "medium" },
+      "claude-code": { "model": "sonnet", "thinkingBudget": 4096 },
+      "codex": { "model": "gpt-5", "reasoningEffort": "medium" }
+    },
+    "verification": {
+      "label": "검증·테스트 실행",
+      "defaultRole": "verifier",
+      "mcpHint": ["asd"],
+      "antigravity": { "tier": "flash_lite", "agent": "asd-verifier" },
+      "opencode": { "category": "quick", "reasoningEffort": "none" },
+      "claude-code": { "model": "haiku", "thinkingBudget": 0 },
+      "codex": { "model": "codex-mini", "reasoningEffort": "none" }
+    }
+  },
+  "difficulties": {
+    "reasoning-none": {
+      "label": "추론 X — 단순 보일러플레이트·포맷·스크립트",
+      "defaultRole": "worker-light",
+      "antigravity": { "tier": "flash_lite", "agent": "asd-worker" },
+      "opencode": { "reasoningEffort": "none", "thinkingBudget": 0 },
+      "claude-code": { "model": "haiku", "thinkingBudget": 0 },
+      "codex": { "reasoningEffort": "none" }
+    },
+    "reasoning-low": {
+      "label": "추론 조금 — 일반 기능 구현·단위 테스트",
+      "defaultRole": "worker",
+      "antigravity": { "tier": "flash", "agent": "asd-worker" },
+      "opencode": { "reasoningEffort": "low", "thinkingBudget": 2048 },
+      "claude-code": { "model": "sonnet", "thinkingBudget": 2048 },
+      "codex": { "reasoningEffort": "low" }
+    },
+    "reasoning-medium": {
+      "label": "추론 많이 — 다중 파일 리팩터링·비동기 디버깅",
+      "defaultRole": "debugger",
+      "antigravity": { "tier": "flash", "performanceTier": "pro", "agent": "asd-debugger" },
+      "opencode": { "reasoningEffort": "medium", "thinkingBudget": 8192 },
+      "claude-code": { "model": "sonnet", "thinkingBudget": 8192 },
+      "codex": { "reasoningEffort": "medium" }
+    },
+    "reasoning-deep": {
+      "label": "심층적 추론 — 고난도 아키텍처·복합 버그 근본 원인 분석",
+      "defaultRole": "debugger",
+      "antigravity": { "tier": "pro", "agent": "asd-debugger" },
+      "opencode": { "reasoningEffort": "high", "thinkingBudget": 24576 },
+      "claude-code": { "model": "opus", "thinkingBudget": 24576 },
+      "codex": { "reasoningEffort": "high" }
+    }
+  }
+}
