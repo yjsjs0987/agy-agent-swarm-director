@@ -6,7 +6,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "test": "node --test tests/",
+    "test": "node --test tests/*.test.mjs",
     "lint": "node scripts/asd.mjs lint",
     "validate": "agy plugin validate . --strict --json"
   }
