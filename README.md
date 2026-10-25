@@ -1,6 +1,6 @@
 # ASD (Agent Swarm Director)
 
-**A**rchitect · **S**pawn · **D**elegate
+**A**rchitect, **S**pawn, and **D**elegate. It does everything.
 
 Antigravity용 오케스트레이션 플러그인. 프론티어 모델이 소크라틱 질문으로 요구사항을 꼼꼼히 캐물어 계획을 세우고, 승인 한 번 이후에는 모든 구현·테스트·검증을 저비용 서브에이전트(`flash_lite` / `flash`, 필요할 때만 제한된 `pro`)에 병렬로 위임합니다.
 
