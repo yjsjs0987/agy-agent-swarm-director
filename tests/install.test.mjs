@@ -64,12 +64,35 @@ test("status reports real plugin dir state (present + missing files)", (t) => {
   assert.equal(report.targetDir, target);
   assert.equal(report.registered, false);
   assert.equal(report.installed, false);
+  // Status must AGREE with the actual filesystem, whatever reality is —
+  // hooks.json now exists (Todo 16) and skills/*/SKILL.md are being authored
+  // in parallel (Todo 12/13), so hardcoding present/missing is a timebomb.
+  const expected = {
+    "plugin.json": fs.existsSync(path.join(REPO_ROOT, "plugin.json")) ? "present" : "missing",
+    "hooks.json": fs.existsSync(path.join(REPO_ROOT, "hooks.json")) ? "present" : "missing",
+    "rules/AGENTS.md": fs.existsSync(path.join(REPO_ROOT, "rules", "AGENTS.md")) ? "present" : "missing",
+    "scripts/asd.mjs": fs.existsSync(path.join(REPO_ROOT, "scripts", "asd.mjs")) ? "present" : "missing",
+  };
+  // skills/*/SKILL.md: count on disk the same way install.mjs does.
+  const skillsDir = path.join(REPO_ROOT, "skills");
+  let skillCount = 0;
+  try {
+    for (const name of fs.readdirSync(skillsDir)) {
+      try {
+        if (fs.statSync(path.join(skillsDir, name)).isDirectory() &&
+            fs.statSync(path.join(skillsDir, name, "SKILL.md")).isFile()) skillCount++;
+      } catch { /* broken entry: not a skill doc */ }
+    }
+  } catch { /* skills/ missing entirely */ }
+  expected["skills/*/SKILL.md"] = skillCount > 0 ? "present" : "missing";
+
+  for (const [rel, want] of Object.entries(expected)) {
+    assert.equal(report.files[rel], want, `status for ${rel} disagrees with the filesystem`);
+  }
+
+  // Regression anchor: plugin.json is known to exist on disk and must be
+  // reported "present" — keeps this test from becoming a tautology.
   assert.equal(report.files["plugin.json"], "present");
-  assert.equal(report.files["rules/AGENTS.md"], "present");
-  assert.equal(report.files["scripts/asd.mjs"], "present");
-  // Not authored yet (later todos) — status must REPORT them, never fail.
-  assert.equal(report.files["hooks.json"], "missing");
-  assert.equal(report.files["skills/*/SKILL.md"], "missing");
 });
 
 test("install link registers idempotently and status flips to registered", (t) => {
@@ -101,7 +124,12 @@ test("install copy copies present items and prints skip note for missing", (t) =
   assert.ok(fs.existsSync(path.join(dest, "rules", "AGENTS.md")));
   assert.ok(fs.existsSync(path.join(dest, "scripts", "asd.mjs")));
   assert.ok(fs.existsSync(path.join(dest, "agents", "asd-worker.md")));
-  assert.match(r.stdout, /skip \(missing\): hooks\.json/);
+  // hooks.json now exists (Todo 16): copy mode copies it when present,
+  // skips it when missing — assert reality, not a frozen snapshot.
+  const hooksNote = fs.existsSync(path.join(REPO_ROOT, "hooks.json"))
+    ? /copied: hooks\.json/
+    : /skip \(missing\): hooks\.json/;
+  assert.match(r.stdout, hooksNote);
   const st = runCli(["status", "--target-dir", target]);
   assert.equal(JSON.parse(st.stdout).installed, true);
 });
