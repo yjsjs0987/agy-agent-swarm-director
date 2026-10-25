@@ -35,7 +35,7 @@ const validTask = () => ({
 const validSession = () => ({
   schemaVersion: 1,
   mainConversationId: "conv-1",
-  projectRoot: "C:/Users/x/proj",
+  projectRoot: "C:/proj",
   activeCommand: "asd",
   phase: "planning",
   startedAt: ISO,
