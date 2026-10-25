@@ -1,0 +1,37 @@
+{
+  "asd-pre-tool-guard": {
+    "PreToolUse": [
+      {
+        "matcher": "write_to_file|replace_file_content|multi_replace_file_content|write_file|edit_file|invoke_subagent|subagent|launch_subagent",
+        "hooks": [
+          { "type": "command", "command": "node scripts/hooks/pre-tool-guard.mjs", "timeout": 10 }
+        ]
+      }
+    ]
+  },
+  "asd-session-start": {
+    "SessionStart": [
+      { "type": "command", "command": "node scripts/hooks/session-start-resume.mjs", "timeout": 10 }
+    ]
+  },
+  "asd-pre-invocation": {
+    "PreInvocation": [
+      { "type": "command", "command": "node scripts/hooks/pre-invocation-status.mjs", "timeout": 10 }
+    ]
+  },
+  "asd-post-tool-ledger": {
+    "PostToolUse": [
+      {
+        "matcher": "write_to_file|replace_file_content|multi_replace_file_content|write_file|edit_file|invoke_subagent|subagent|launch_subagent",
+        "hooks": [
+          { "type": "command", "command": "node scripts/hooks/post-tool-ledger.mjs", "timeout": 10 }
+        ]
+      }
+    ]
+  },
+  "asd-stop-guard": {
+    "Stop": [
+      { "type": "command", "command": "node scripts/hooks/stop-guard.mjs", "timeout": 10 }
+    ]
+  }
+}
