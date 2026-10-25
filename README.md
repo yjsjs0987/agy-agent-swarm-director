@@ -144,7 +144,7 @@ Requirements: Node.js >= 20, zero npm dependencies.
 Install from GitHub (replace `<owner>` with the actual repository owner):
 
 ```bash
-agy plugin install https://github.com/<owner>/agent-swarm-director
+agy plugin install https://github.com/yjsjs0987/agy-agent-swarm-director
 ```
 
 Then, in any project:
