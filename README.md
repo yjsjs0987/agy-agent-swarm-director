@@ -162,4 +162,4 @@ All state lives under `.asd/` in your project. Machine-managed files (`TODO.md`,
 
 ## 라이선스
 
-MIT
+Apache License 2.0
