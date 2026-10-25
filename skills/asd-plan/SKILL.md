@@ -129,5 +129,8 @@ section-4 rows, and run `asd_plan_validate` before `lint` — it reports
 per-Turn file collisions across parallel tasks and circular `dependsOn`
 cycles from state.json. During repo scans, scouts should use `context7`
 (official docs for external APIs), `grep_app` (production examples), and
-`websearch` (current error/release info) per the task's `mcpHint`. The CLI
+`websearch` (current error/release info) per the task's `mcpHint`. Use `lsp`
+for go-to-definition / find-references / diagnostics and `ast-grep` for
+structural AST-pattern search/rewrite when the target is a syntax shape, not
+literal text. The CLI
 remains the fallback when MCP is unavailable.

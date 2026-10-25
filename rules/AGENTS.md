@@ -44,3 +44,5 @@ Research MCP servers, used by scouts and workers per their task's `mcpHint`:
 - `context7`: fetch official library docs BEFORE coding against any external API or framework.
 - `grep_app`: find real-world production code examples before inventing a pattern.
 - `websearch`: search current error messages and release notes when debugging.
+- `lsp`: go-to-definition / find-references / diagnostics for code quality
+- `ast-grep`: structural AST-pattern search/rewrite when the target is a syntax shape, not literal text
