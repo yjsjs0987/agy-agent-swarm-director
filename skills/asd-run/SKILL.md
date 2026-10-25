@@ -141,3 +141,9 @@ Full dispatch details: `references/dispatch-protocol.md`.
 - Print `.asd/TODO.md` to the user at the start of every Turn, after every verification pass, and after every TODO mutation.
 - Advance between Turns autonomously; only pause for a `[!]` blocked task that exhausted the escalation ladder.
 - References: `references/dispatch-protocol.md`, `references/escalation-protocol.md`, `references/subagent-roles.md`.
+
+## MCP Tools (asd-mcp)
+
+When the `asd` MCP server is connected, prefer its tools over the equivalent CLI invocations above: `asd_preflight` (Step 0), `asd_todo_mutate` with `action: "start" | "done" | "fail" | "add" | "update"` (Steps 1–3), and `asd_render_summary` (Step 4). In Step 3, run `asd_verify_turn` for the current Turn BEFORE marking tasks done: it compares the working tree against the Turn's `baselineSnapshot`, so files modified in earlier Turns or pre-existing dirty files are never false-flagged, and any file changed this Turn that is outside the tasks' declared `files[]` is reported in `outOfScopeFiles` (fail those tasks). The CLI commands remain the fallback when MCP is unavailable.
+
+Subagent research tools (pass through in prompts when relevant): `context7` for official docs before coding external APIs, `grep_app` for production code examples, `websearch` for error debugging.

@@ -35,3 +35,12 @@ Every Turn in `/asd-plan` (upon plan creation) and `/asd-run` (at Turn start and
 ## Rule 5 — Minimal Human Interruptions
 
 Do not ask the user questions that a `flash_lite` scout can answer from the codebase. Once the plan is approved, execute all Turns to completion autonomously.
+
+## Rule 6 — MCP Tools (asd-mcp + research servers)
+
+When the `asd` MCP server is connected, prefer its tools over equivalent CLI spawns: `asd_preflight` (Rule 1), `asd_todo_mutate` (state/TODO mutations), `asd_verify_turn` (Turn fact-check before marking tasks done), `asd_render_summary` (final summary), `asd_route_next` (tier routing), `asd_plan_validate` (PLAN lint + collisions + dependency cycles). The CLI remains the fallback when MCP is unavailable.
+
+Research MCP servers, used by scouts and workers per their task's `mcpHint`:
+- `context7`: fetch official library docs BEFORE coding against any external API or framework.
+- `grep_app`: find real-world production code examples before inventing a pattern.
+- `websearch`: search current error messages and release notes when debugging.

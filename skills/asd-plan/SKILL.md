@@ -120,3 +120,14 @@ resolved. In Plan Refinement Mode, focus questions on the delta only.
 - `node "<ASD_CLI>" plan-import` exits 0 and `.asd/TODO.md` exists with one
   grammar-valid line per planned task.
 - No file outside `.asd/` was touched.
+
+## MCP Tools (asd-mcp)
+
+When the `asd` MCP server is connected: use `asd_route_next` (category first,
+difficulty fallback, profile cap) to assign each task's `tier` while authoring
+section-4 rows, and run `asd_plan_validate` before `lint` — it reports
+per-Turn file collisions across parallel tasks and circular `dependsOn`
+cycles from state.json. During repo scans, scouts should use `context7`
+(official docs for external APIs), `grep_app` (production examples), and
+`websearch` (current error/release info) per the task's `mcpHint`. The CLI
+remains the fallback when MCP is unavailable.

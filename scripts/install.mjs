@@ -1,4 +1,6 @@
 // @ts-check
+// allow: SIZE_OK — the plan mandates a single installer file (scripts/install.mjs);
+// splitting would create files outside the approved deliverable set.
 /**
  * ASD plugin installer/verifier for Antigravity customization roots.
  *
@@ -8,6 +10,10 @@
  * `plugins.json` schema from agy-customizations docs: an `entries` array
  * whose `path` points at the plugin's PARENT directory (scanned one level
  * deep) with `include_only: ["asd"]` so sibling directories are not loaded.
+ *
+ * MCP dedupe: when installing, the user's global `~/.gemini/config/mcp_config.json`
+ * is checked (read-only) for `context7` / `grep_app` / `websearch`; entries that
+ * already exist there are reported as globally active and never overwritten.
  *
  * Zero dependencies: node: built-ins + ./lib/fs-atomic.mjs only.
  */
@@ -33,6 +39,64 @@ const PARENT_DIR = path.dirname(PLUGIN_DIR);
 
 /** Items copy mode copies into `<target>/plugins/asd/` (missing ones skipped). */
 const COPY_ITEMS = ["plugin.json", "hooks.json", "rules", "agents", "skills", "scripts"];
+
+/**
+ * External MCP servers this plugin's root mcp_config.json also declares.
+ * When the user's global config already defines one, it is reported as
+ * "already globally active" and NEVER overwritten — the global entry wins.
+ */
+const MCP_GLOBAL_SERVERS = Object.freeze(["context7", "grep_app", "websearch"]);
+
+/** @returns {string} */
+function globalMcpConfigPath() {
+  return path.join(os.homedir(), ".gemini", "config", "mcp_config.json");
+}
+
+/**
+ * Reads the server names defined in an mcp_config.json (the documented shape
+ * wraps entries in "mcpServers"; a flat top-level map is tolerated).
+ * @param {string} cfgPath
+ * @returns {string[] | null} defined server names, or null when absent/corrupt
+ */
+function readMcpServerNames(cfgPath) {
+  const cfg = readJsonSafe(cfgPath, null);
+  if (cfg === null || typeof cfg !== "object" || Array.isArray(cfg)) return null;
+  const servers = cfg.mcpServers && typeof cfg.mcpServers === "object" && !Array.isArray(cfg.mcpServers)
+    ? cfg.mcpServers
+    : cfg;
+  return Object.keys(servers);
+}
+
+/**
+ * Which of the plugin's external MCP servers are already defined in the
+ * user's global `~/.gemini/config/mcp_config.json`.
+ * @returns {{ globalConfigPath: string, globallyActive: string[], notGloballyActive: string[] }}
+ */
+function mcpGlobalsReport() {
+  const globalConfigPath = globalMcpConfigPath();
+  const names = readMcpServerNames(globalConfigPath);
+  /** @type {string[]} */ const globallyActive = [];
+  /** @type {string[]} */ const notGloballyActive = [];
+  for (const name of MCP_GLOBAL_SERVERS) {
+    (names !== null && names.includes(name) ? globallyActive : notGloballyActive).push(name);
+  }
+  return { globalConfigPath, globallyActive, notGloballyActive };
+}
+
+/**
+ * Logs the MCP dedupe verdict for install commands. Read-only: the user's
+ * global mcp_config.json is never written or overwritten by this installer.
+ * @returns {void}
+ */
+function reportMcpGlobals() {
+  const r = mcpGlobalsReport();
+  if (r.globallyActive.length > 0) {
+    console.log(`mcp: already globally active (kept, never overwritten): ${r.globallyActive.join(", ")}`);
+  }
+  if (r.notGloballyActive.length > 0) {
+    console.log(`mcp: not globally active (plugin root mcp_config.json covers them): ${r.notGloballyActive.join(", ")}`);
+  }
+}
 
 /**
  * @typedef {"status" | "install" | "uninstall"} Command
@@ -151,6 +215,7 @@ function statusCmd(targetDir) {
     targetDir,
     registered: entries.some(isThisPluginsEntry),
     installed: fs.existsSync(path.join(targetDir, "plugins", PLUGIN_BASENAME)),
+    mcp: mcpGlobalsReport(),
     files: {
       "plugin.json": fileState(path.join(PLUGIN_DIR, "plugin.json")),
       "hooks.json": fileState(path.join(PLUGIN_DIR, "hooks.json")),
@@ -179,6 +244,7 @@ async function installLink(targetDir) {
   }
   cfg.entries = entries;
   await writeFileAtomic(pluginsJsonPathOf(targetDir), JSON.stringify(cfg, null, 2) + "\n");
+  reportMcpGlobals();
   console.log(already
     ? `already registered: ${PLUGIN_BASENAME} -> ${pluginsJsonPathOf(targetDir)}`
     : `registered: ${PLUGIN_BASENAME} (path: ${PARENT_DIR}) -> ${pluginsJsonPathOf(targetDir)}`);
@@ -204,6 +270,7 @@ function installCopy(targetDir) {
     }
   }
   console.log(`copied plugin -> ${dest}`);
+  reportMcpGlobals();
 }
 
 /**
