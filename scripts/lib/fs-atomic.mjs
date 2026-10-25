@@ -155,7 +155,11 @@ export async function withFileLock(lockPath, fn, options = {}) {
         );
         fs.fsyncSync(fd);
       } catch (e) {
-        if (errorCode(e) !== "EEXIST") throw e;
+        // Windows: a delete-pending lockfile (unlink vs staleness-read race
+        // under cross-process contention) makes exclusive create fail with
+        // EPERM/EACCES instead of EEXIST — retry exactly like EEXIST.
+        const code = errorCode(e);
+        if (code !== "EEXIST" && code !== "EPERM" && code !== "EACCES") throw e;
         if (Date.now() > deadline) throw new LockTimeoutError(lockPath, timeoutMs);
         if (isLockStale(lockPath, staleMs)) {
           try {
