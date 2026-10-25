@@ -18,17 +18,15 @@ Antigravity용 오케스트레이션 플러그인. 프론티어 모델이 소크
 GitHub에서 바로 설치:
 
 ```bash
-agy plugin install https://github.com/<owner>/agent-swarm-director
+agy plugin install https://github.com/yjsjs0987/agy-agent-swarm-director
 ```
 
 복제 후 설치:
 
 ```bash
-git clone https://github.com/<owner>/agent-swarm-director asd
+git clone https://github.com/yjsjs0987/agy-agent-swarm-director asd
 agy plugin install ./asd
 ```
-
-`<owner>`는 실제 저장소 소유자(또는 본인 포크)로 바꾸세요.
 
 로컬 개발용 링크 설치:
 
